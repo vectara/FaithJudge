@@ -101,11 +101,22 @@ Evaluating hallucinations in LLMs for RAG tasks is crucial for improving trustwo
 
         python3 eval.py --model openai/gpt-4o-2024-11-20 --judge_model o3-mini
 
+
+## Paper
+Please check out our paper [Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards](https://arxiv.org/abs/2505.04847): 
+
+```
+@article{tamber2025benchmarking,
+  title={Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards},
+  author={Tamber, Manveer Singh and Bao, Forrest Sheng and Xu, Chenyu and Luo, Ge and Kazi, Suleman and Bae, Minseok and Li, Miaoran and Mendelevitch, Ofer and Qu, Renyi and Lin, Jimmy},
+  journal={arXiv preprint arXiv:2505.04847},
+  year={2025}
+}
+```
+
 ## 🔗 Also check out 
 
 - [Vectara's Hallucination Leaderboard](https://github.com/vectara/hallucination-leaderboard): We build upon our past hallucination leaderboard. 
 - [FaithBench](https://arxiv.org/abs/2410.13210): We make use of hallucination annotations from FaithBench.
 - [RagTruth](https://aclanthology.org/2024.acl-long.585/): We make use of hallucination annotations from RagTruth.
 - [Google's Facts Grounding Leaderboard](https://deepmind.google/discover/blog/facts-grounding-a-new-benchmark-for-evaluating-the-factuality-of-large-language-models/): FACTS Grounding also benchmarks hallucinations with LLMs. We recommend checking out their work as well!
-
-Paper coming soon!
