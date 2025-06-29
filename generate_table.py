@@ -2,6 +2,7 @@ import os
 import json
 import re
 import pandas as pd
+import glob
 
 EVAL_DIR = "eval_results"
 
@@ -39,17 +40,32 @@ ORG_FORMAT = {
 
 # Dictionary mapping model identifiers ("provider/model") to website URLs.
 MODEL_LINKS = {
+    "openai/o3-high-2025-04-16": "https://platform.openai.com/docs/models/o3",
+    "openai/o3-medium-2025-04-16": "https://platform.openai.com/docs/models/o3",
+    "openai/o3-low-2025-04-16": "https://platform.openai.com/docs/models/o3",
     "openai/o3-mini-high-2025-01-31": "https://platform.openai.com/docs/models/o3-mini",
     "openai/o3-mini-medium-2025-01-31": "https://platform.openai.com/docs/models/o3-mini",
     "openai/o3-mini-low-2025-01-31": "https://platform.openai.com/docs/models/o3-mini",
-    "openai/gpt-4.5-preview-2025-02-27": "https://platform.openai.com/docs/models/gpt-4.5-preview",
-    "openai/gpt-4o-2024-11-20": "https://platform.openai.com/docs/models/gpt-4o",
+    "openai/o4-mini-high-2025-04-16": "https://platform.openai.com/docs/models/o4-mini",
+    "openai/o4-mini-medium-2025-04-16": "https://platform.openai.com/docs/models/o4-mini",
+    "openai/o4-mini-low-2025-04-16": "https://platform.openai.com/docs/models/o4-mini",
     "openai/gpt-3.5-turbo-0125": "https://platform.openai.com/docs/models/gpt-3.5-turbo",
+    "openai/gpt-4o-2024-11-20": "https://platform.openai.com/docs/models/gpt-4o",
     "openai/gpt-4o-mini-2024-07-18": "https://platform.openai.com/docs/models/gpt-4o-mini",
+    "openai/gpt-4.1-2025-04-14": "https://platform.openai.com/docs/models/gpt-4.1",
+    "openai/gpt-4.1-mini-2025-04-14": "https://platform.openai.com/docs/models/gpt-4.1-mini",
+    "openai/gpt-4.5-preview-2025-02-27": "https://platform.openai.com/docs/models/gpt-4.5-preview",
     "anthropic/claude-3-7-sonnet-thinking-20250219": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
     "anthropic/claude-3-7-sonnet-20250219": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
-    "google/gemini-2.5-pro-exp-03-25": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-pro-preview-03-25",
+    "anthropic/claude-opus-4-thinking-202505149": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
+    "anthropic/claude-opus-4-202505149": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
+    "anthropic/claude-sonnet-4-thinking-202505149": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
+    "anthropic/claude-sonnet-4-202505149": "https://docs.anthropic.com/en/docs/about-claude/models/all-models",
     "google/gemini-2.0-flash-001": "https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash",
+    "google/gemini-2.5-flash": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash",
+    "google/gemini-2.5-pro-exp-03-25": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-pro-preview-03-25",
+    "google/gemini-2.5-pro": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-pro",
+    "xai/grok-3": "https://x.ai/api",
     "meta-llama/llama-4-maverick": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
 }
 
@@ -125,8 +141,13 @@ def process_models(eval_dir):
             total_lines = 0
 
             for task_name in TASK_ORDER:
-                filename = TASK_FILES[task_name]
-                file_path = os.path.join(model_path, filename)
+                suffix = TASK_FILES[task_name]
+                matches = glob.glob(os.path.join(model_path, f"*{suffix}"))
+                if not matches:
+                    warnings.append(f"Missing file: *{suffix}")
+                    valid = False
+                    break
+                file_path = matches[0] 
 
                 if not os.path.exists(file_path):
                     warnings.append(f"Missing file: {file_path}")
@@ -134,9 +155,9 @@ def process_models(eval_dir):
                     break
 
                 count, num_lines = calculate_hallucination_stats(file_path)
-                if num_lines != EXPECTED_LINES[filename]:
+                if num_lines != EXPECTED_LINES[suffix]:
                     warnings.append(
-                        f"Line count mismatch in {file_path} (expected {EXPECTED_LINES[filename]}, got {num_lines})"
+                        f"Line count mismatch in {file_path} (expected {EXPECTED_LINES[suffix]}, got {num_lines})"
                     )
                     valid = False
                     break

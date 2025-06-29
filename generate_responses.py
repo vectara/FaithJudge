@@ -44,6 +44,11 @@ def load_model(model_id):
         model_data["client"] = deepseek_client
         model_data["mode"] = "deepseek"
 
+    elif "grok" in model_id.lower():
+        print(f"Loading OpenAI client for '{model_id}'...")
+        model_data["client"] = OpenAI(api_key=os.environ.get('XAI_API_KEY'), base_url="https://api.x.ai/v1",)
+        model_data["mode"] = "grok"
+
     elif any(model_provider in model_id.lower() for model_provider in ["meta-llama", "microsoft", "qwen", "gemma", 'thudm', 'mistralai', 'ai21labs']):
         print(f"Loading HuggingFace pipeline for HGF model '{model_id}' locally. This may be large...")
         pipe = pipeline(
@@ -110,14 +115,21 @@ def generate_response(model_data, system_prompt, user_prompt, max_retries=100):
                         ],
                         max_completion_tokens=16384,
                     )
-                elif "o3" in model_id.lower():
+                elif "o3" in model_id.lower() or 'o4-mini' in model_id.lower():
                     match = re.search(r"(low|medium|high)$", model_id)
                     if match:
                         think_mode = match.group(1)
                     else:
                         think_mode = "medium"
+                    
+                    base_model_id = model_id
+                    base_model_id = base_model_id.replace("high-", "")
+                    base_model_id = base_model_id.replace("medium-", "")
+                    base_model_id = base_model_id.replace("low-", "")
+                    base_model_id = base_model_id.replace("openai/", "")
+
                     response = client.chat.completions.create(
-                        model="o3-mini",
+                        model=base_model_id,
                         reasoning_effort=think_mode,
                         messages=[
                             {"role": "developer", "content": system_prompt},
@@ -179,10 +191,12 @@ def generate_response(model_data, system_prompt, user_prompt, max_retries=100):
             # 3) ANTHROPIC
             # -------------------------
             elif mode == "anthropic":
+                base_model_id = model_id.replace('anthropic/', '')
                 print(f"Requesting {model_id} via Anthropic API...")
                 if "think" in model_id.lower():
+                    base_model_id = base_model_id.replace('thinking-', '')
                     message = client.messages.create(
-                        model="claude-3-7-sonnet-20250219",
+                        model=base_model_id,
                         max_tokens=16384,
                         system=system_prompt,
                         thinking={
@@ -197,8 +211,8 @@ def generate_response(model_data, system_prompt, user_prompt, max_retries=100):
                     return message.content[1].text
                 else:
                     message = client.messages.create(
-                        model=model_id,
-                        max_tokens=8192,
+                        model=base_model_id,
+                        max_tokens=16384,
                         temperature=0,
                         system=system_prompt,
                         messages=[{
@@ -246,7 +260,23 @@ def generate_response(model_data, system_prompt, user_prompt, max_retries=100):
                 return response.choices[0].message.content
 
             # -------------------------
-            # 5) General HF Pipeline
+            # 5) GROK
+            # -------------------------
+            elif mode =="grok":
+                print(f"Requesting {model_id} via OpenAI API...")
+                response = client.chat.completions.create(
+                        model=model_id.replace("xai/", ""),
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        temperature=0.0,
+                        max_completion_tokens=8192,)
+                
+                return response.choices[0].message.content
+            
+            # -------------------------
+            # 6) General HF Pipeline
             # -------------------------
             elif mode == "hgf":
                 print(f"Generating with local pipeline for {model_id}...")
@@ -367,7 +397,7 @@ def main():
     model_id = args.model
     resume_run = args.resume.lower() == "true"
 
-    input_files = ["eval_data/benchmarkz_summary.jsonl", "eval_data/ragtruth_summary.jsonl", "eval_data/ragtruth_qa.jsonl", "eval_data/ragtruth_data2txt.jsonl"]
+    input_files = ["eval_data/faithbench_summary.jsonl", "eval_data/ragtruth_summary.jsonl", "eval_data/ragtruth_qa.jsonl", "eval_data/ragtruth_data2txt.jsonl"]
 
     # For output, we create a folder structure based on task and model.
     parts = model_id.split("/")
