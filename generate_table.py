@@ -35,7 +35,8 @@ ORG_FORMAT = {
     "mistralai": "Mistral AI",
     "microsoft": "Microsoft",
     "anthropic": "Anthropic",
-    "google": "Google"
+    "google": "Google",
+    "deepseek": "DeepSeek"
 }
 
 # Dictionary mapping model identifiers ("provider/model") to website URLs.
@@ -67,6 +68,7 @@ MODEL_LINKS = {
     "google/gemini-2.5-pro": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-pro",
     "xai/grok-3": "https://x.ai/api",
     "meta-llama/llama-4-maverick": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+    "deepseek/r1-0528": "https://api-docs.deepseek.com/news/news250528"
 }
 
 # if the number of parameters cannot be correctly inferred from the model name, use this
@@ -75,7 +77,8 @@ MODEL_PARAMS = {
     "microsoft/phi-4": "14B",
     "THUDM/glm-4-9b-chat-hf": "9B",
     "ai21labs/AI21-Jamba-mini-1.6": "12B active / 52B total",
-    "meta-llama/llama-4-maverick": "17B active / 109B total"
+    "meta-llama/llama-4-maverick": "17B active / 109B total",
+    "deepseek/r1-0528": "37B active / 671B total"
 }
 
 def get_param_count(provider, model):
