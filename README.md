@@ -119,14 +119,33 @@ Evaluating hallucinations in LLMs for RAG tasks is crucial for improving trustwo
 
 
 ## Paper
-Please check out our paper [Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards](https://arxiv.org/abs/2505.04847): 
+Please check out our paper [Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards](https://aclanthology.org/2025.emnlp-industry.54/): 
 
 ```
-@article{tamber2025benchmarking,
-  title={Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards},
-  author={Tamber, Manveer Singh and Bao, Forrest Sheng and Xu, Chenyu and Luo, Ge and Kazi, Suleman and Bae, Minseok and Li, Miaoran and Mendelevitch, Ofer and Qu, Renyi and Lin, Jimmy},
-  journal={arXiv preprint arXiv:2505.04847},
-  year={2025}
+@inproceedings{tamber-etal-2025-benchmarking,
+    title = "Benchmarking {LLM} Faithfulness in {RAG} with Evolving Leaderboards",
+    author = "Tamber, Manveer Singh  and
+      Bao, Forrest Sheng  and
+      Xu, Chenyu  and
+      Luo, Ge  and
+      Kazi, Suleman  and
+      Bae, Minseok  and
+      Li, Miaoran  and
+      Mendelevitch, Ofer  and
+      Qu, Renyi  and
+      Lin, Jimmy",
+    editor = "Potdar, Saloni  and
+      Rojas-Barahona, Lina  and
+      Montella, Sebastien",
+    booktitle = "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: Industry Track",
+    month = nov,
+    year = "2025",
+    address = "Suzhou (China)",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.emnlp-industry.54/",
+    doi = "10.18653/v1/2025.emnlp-industry.54",
+    pages = "799--811",
+    ISBN = "979-8-89176-333-3",
 }
 ```
 
